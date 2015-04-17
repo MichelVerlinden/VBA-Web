@@ -9,14 +9,14 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Public wClient As WebClient
-Public wRequest As WebRequest
-Public wResponse As WebResponse
 Public Name As String
 
-Public Function buildQuery(ByRef wRequest As WebRequest, ByRef params As Dictionary) As Boolean
+Public Function initClient(ByRef Client As WebClient) As Boolean
 End Function
 
-Public Function getDataPoint(ByRef strRes As String, ParamArray p() As Variant) As Boolean
+Public Function buildRequest(ByRef Request As WebRequest, ByRef params As Dictionary) As Boolean
+End Function
+
+Public Function getDataPoint(ByRef strRes As String, ByRef Response As WebResponse, ParamArray p() As Variant) As Boolean
 End Function
 

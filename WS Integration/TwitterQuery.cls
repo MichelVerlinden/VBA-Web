@@ -10,40 +10,47 @@ Attribute VB_Exposed = False
 Option Explicit
 Implements IRestWSQuery
 
-Private pTwitterClient As WebClient
-Private pTwitterRequest As WebRequest
-Private pTwitterResponse As WebResponse
 Private pTwitterKey As String
 Private pTwitterSecret As String
 
-Private Property Let IRestWSQuery_Name(ByVal RHS As String)
-End Property
+Private Function IRestWSQuery_buildRequest(Request As WebRequest, params As Scripting.IDictionary) As Boolean
+    Set Request = New WebRequest
+    Request.Resource = "search/tweets.{format}"
+    Request.Format = json
+    Request.AddUrlSegment "format", "json"
+    Request.AddQuerystringParam "q", makeTwitterQuery(params)
+    Request.AddQuerystringParam "lang", "en"
+    Request.AddQuerystringParam "count", 20
+    Request.Method = HttpGet
+    IRestWSQuery_buildRequest = True
+End Function
 
-' - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-' Properties
-'  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Private Function IRestWSQuery_getDataPoint(strRes As String, Response As WebResponse, ParamArray p() As Variant) As Boolean
+    Debug.Print Response.Content
+    strRes = "Completed"
+    IRestWSQuery_getDataPoint = True
+End Function
 
-Private Property Get IRestWSQuery_Name() As String
-    IRestWSQuery_Name = "TwitterSentiment"
-End Property
+Private Function IRestWSQuery_initClient(Client As WebClient) As Boolean
+    If Client Is Nothing Then
 
-Private Property Set IRestWSQuery_wClient(ByVal RHS As WebClient)
-    Set pTwitterClient = RHS
-End Property
-
-Private Property Get IRestWSQuery_wClient() As WebClient
-    If pTwitterClient Is Nothing Then
-
-        Set pTwitterClient = New WebClient
-        pTwitterClient.BaseUrl = "https://api.twitter.com/1.1/"
+        Set Client = New WebClient
+        Client.BaseUrl = "https://api.twitter.com/1.1/"
         
         Dim Auth As New TwitterAuthenticator
         Auth.Setup _
             ConsumerKey:=TwitterKey, _
             ConsumerSecret:=TwitterSecret
-        Set pTwitterClient.Authenticator = Auth
+        Set Client.Authenticator = Auth
     End If
-    Set IRestWSQuery_wClient = pTwitterClient
+    IRestWSQuery_initClient = True
+End Function
+
+Private Property Let IRestWSQuery_Name(ByVal RHS As String)
+End Property
+
+Private Property Get IRestWSQuery_Name() As String
+    IRestWSQuery_Name = "Twitter"
 End Property
 
 ' Implement caching for Consumer Key, Consumer Secret, and WebClient
@@ -69,40 +76,10 @@ Private Property Get TwitterSecret() As String
     TwitterSecret = pTwitterSecret
 End Property
 
-Private Function IRestWSQuery_buildQuery(ByRef wRequest As WebRequest, params As Scripting.IDictionary) As Boolean
-    Set pTwitterRequest = New WebRequest
-    pTwitterRequest.Resource = "search/tweets.{format}"
-    pTwitterRequest.Format = json
-    pTwitterRequest.AddUrlSegment "format", "json"
-    pTwitterRequest.AddQuerystringParam "q", makeTwitterQuery(params)
-    pTwitterRequest.AddQuerystringParam "lang", "en"
-    pTwitterRequest.AddQuerystringParam "count", 20
-    pTwitterRequest.Method = HttpGet
-    IRestWSQuery_buildQuery = True
-End Function
-
-Private Function IRestWSQuery_getDataPoint(strRes As String, ParamArray p() As Variant) As Boolean
-    IRestWSQuery_getDataPoint = True
-    Debug.Print pTwitterResponse.Data(0)
-    strRes = "Completed"
-End Function
-
-Private Property Set IRestWSQuery_wRequest(ByVal RHS As WebRequest)
-    Set pTwitterRequest = RHS
-End Property
-    
-Private Property Get IRestWSQuery_wRequest() As WebRequest
-    Set IRestWSQuery_wRequest = pTwitterRequest
-End Property
-
-Private Property Set IRestWSQuery_wResponse(ByVal RHS As WebResponse)
-    Set pTwitterResponse = RHS
-End Property
-
-Private Property Get IRestWSQuery_wResponse() As WebResponse
-    Set IRestWSQuery_wResponse = pTwitterResponse
-End Property
-
 Private Function makeTwitterQuery(params As Dictionary) As String
-    makeTwitterQuery = "Excel"
+    Dim p As Variant
+    For Each p In params.Items
+        makeTwitterQuery = makeTwitterQuery & p(0) & "+OR+"
+    Next p
+    makeTwitterQuery = Left(makeTwitterQuery, Len(makeTwitterQuery) - 4)
 End Function

@@ -70,6 +70,6 @@ End Function
 '               The data should also be loaded in a module variable for later processing
 '               Set this method as default to handle asynchronous xmlhttp
 '               Call this method from an event handler to manage ADO fetch complete events
-Public Function catchResp()
+Public Sub catchResp()
     'AsynchWSFun.processResp Me
-End Function
+End Sub
