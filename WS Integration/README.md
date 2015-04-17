@@ -9,7 +9,7 @@ To use framework, use RestWSFunction as implementation of IAsyncFun from "Parall
 ### Twitter Example
 
 ```VB.net
-' Twitter Sentiment
+' Twitter Search API
 Public Function testTwitter(keyWord As String) As String
     Dim tWS As New RestWSFunction
     Dim tWeb As New TwitterQuery
