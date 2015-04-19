@@ -7,6 +7,16 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'/*
+'' RestWSFunction
+'' Generic class to use project VBA Web on Worksheet formulas
+''
+''
+'' author : Michel Verlinden
+'' 17/04/2014
+''
+''
+'*/
 Option Explicit
 Implements IAsyncWSFun
 
@@ -14,9 +24,9 @@ Private idReq As Integer
 
 Private restQuery As IRestWSQuery
 
-Public web_Client As WebClient
-Public web_Request As WebRequest
-Public web_Response As WebResponse
+Private web_Client As WebClient
+Private web_Request As WebRequest
+Private web_Response As WebResponse
 
 ''
 ' @property Http
