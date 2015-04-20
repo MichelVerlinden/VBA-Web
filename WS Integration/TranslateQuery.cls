@@ -25,6 +25,7 @@ Implements IRestWSQuery
 Private toTranslate As String
 Private translated As String
 
+Private pName As String
 
 Private Function IRestWSQuery_buildRequest(Request As WebRequest, params As Scripting.IDictionary) As Boolean
     If Request Is Nothing Then
@@ -33,7 +34,7 @@ Private Function IRestWSQuery_buildRequest(Request As WebRequest, params As Scri
     Dim strT As String
     strT = makeText(params)
     Request.AddQuerystringParam "key", Credentials.Values("Google")("api_key")
-    Request.AddQuerystringParam "target", "de"
+    Request.AddQuerystringParam "target", pName
     Request.AddQuerystringParam "q", strT
     toTranslate = Right(strT, Len(strT) - 3)
     IRestWSQuery_buildRequest = True
@@ -72,11 +73,12 @@ Private Function IRestWSQuery_initClient(Client As WebClient) As Boolean
     End If
 End Function
 
-Private Property Let IRestWSQuery_Name(ByVal RHS As String)
+Public Property Let IRestWSQuery_Name(ByVal RHS As String)
+    pName = RHS
 End Property
 
-Private Property Get IRestWSQuery_Name() As String
-    IRestWSQuery_Name = "Translate"
+Public Property Get IRestWSQuery_Name() As String
+    IRestWSQuery_Name = pName
 End Property
 
 Private Function makeText(params As Dictionary) As String
